@@ -10,10 +10,7 @@ class Order(models.Model):
         Customer,
         on_delete=models.DO_NOTHING,
     )
-    payment_type = models.ForeignKey(Payment, on_delete=models.DO_NOTHING, null=True)
+    payment = models.ForeignKey(Payment, on_delete=models.DO_NOTHING, null=True)
     created_date = models.DateField(
         default="0000-00-00",
-    )
-    product = models.ManyToManyField(
-        "Product", through="OrderProduct", related_name="products"
     )

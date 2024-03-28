@@ -25,15 +25,24 @@ class OrderLineItemSerializer(serializers.HyperlinkedModelSerializer):
         depth = 1
 
 
-class OrderSerializer(serializers.HyperlinkedModelSerializer):
+class OrderSerializer(serializers.ModelSerializer):
     """JSON serializer for customer orders"""
 
-    lineitems = OrderLineItemSerializer(many=True)
+    # lineitems = OrderLineItemSerializer(source="line_items", many=True)
 
     class Meta:
         model = Order
-        url = serializers.HyperlinkedIdentityField(view_name="order", lookup_field="id")
-        fields = ("id", "url", "created_date", "payment", "customer", "lineitems")
+        # url = serializers.HyperlinkedIdentityField(view_name="order", lookup_field="id")
+        fields = (
+            "id",
+            "url",
+            "created_date",
+            "payment",
+            "customer",
+        )
+
+
+# "lineitems"
 
 
 class Orders(ViewSet):
@@ -144,7 +153,7 @@ class Orders(ViewSet):
 
         payment = self.request.query_params.get("payment_id", None)
         if payment is not None:
-            orders = orders.filter(payment__id=payment)
+            orders = orders.filter(payment=payment)
 
         json_orders = OrderSerializer(orders, many=True, context={"request": request})
 
