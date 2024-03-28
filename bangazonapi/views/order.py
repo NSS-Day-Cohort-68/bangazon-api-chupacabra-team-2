@@ -113,7 +113,7 @@ class Orders(ViewSet):
         """
         customer = Customer.objects.get(user=request.auth.user)
         order = Order.objects.get(pk=pk, customer=customer)
-        order.payment_type = request.data["payment_type"]
+        order.payment_type = request.data["payment"]
         order.save()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
@@ -151,7 +151,7 @@ class Orders(ViewSet):
         customer = Customer.objects.get(user=request.auth.user)
         orders = Order.objects.filter(customer=customer)
 
-        payment = self.request.query_params.get("payment_id", None)
+        payment = self.request.query_params.get("payment", None)
         if payment is not None:
             orders = orders.filter(payment=payment)
 
