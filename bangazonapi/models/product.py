@@ -48,9 +48,7 @@ class Product(SafeDeleteModel):
         Returns:
             int -- Number items on completed orders
         """
-        sold = OrderProduct.objects.filter(
-            product=self, order__payment_type__isnull=False
-        )
+        sold = OrderProduct.objects.filter(product=self, order__payment__isnull=False)
         return sold.count()
 
     @property
@@ -66,7 +64,7 @@ class Product(SafeDeleteModel):
     def can_be_rated(self, value):
         self.__can_be_rated = value
 
-    @property
+    # @property
     # def average_rating(self):
     #     """Average rating calculated attribute for each product
 
