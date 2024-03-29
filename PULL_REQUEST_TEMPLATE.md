@@ -16,10 +16,10 @@ POST `/products` Creates a new product
 
 ```json
 {
-    "title": "Kite",
-    "product_type_id": 1,
-    "description": "Red. It flies high.",
-    "quantity": 5
+  "title": "Kite",
+  "product_type_id": 1,
+  "description": "Red. It flies high.",
+  "quantity": 5
 }
 ```
 
@@ -29,11 +29,11 @@ HTTP/1.1 201 OK
 
 ```json
 {
-    "id": 54,
-    "title": "Kite",
-    "product_type_id": 1,
-    "description": "Red. It flies high.",
-    "quantity": 5
+  "id": 54,
+  "title": "Kite",
+  "product_type_id": 1,
+  "description": "Red. It flies high.",
+  "quantity": 5
 }
 ```
 
@@ -44,7 +44,6 @@ Description of how to test code...
 - [ ] Run migrations
 - [ ] Run test suite
 - [ ] Seed database
-
 
 ## Related Issues
 
