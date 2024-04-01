@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from bangazonapi.models import Order, Payment, Customer, Product, OrderProduct
 from .product import ProductSerializer
+from .paymenttype import PaymentSerializer
 
 
 class OrderLineItemSerializer(serializers.HyperlinkedModelSerializer):
@@ -28,7 +29,9 @@ class OrderLineItemSerializer(serializers.HyperlinkedModelSerializer):
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for customer orders"""
 
-    lineitems = OrderLineItemSerializer(many=True)
+    lineitems = OrderLineItemSerializer(many=True, read_only=True)
+
+    payment = PaymentSerializer()
 
     class Meta:
         model = Order
