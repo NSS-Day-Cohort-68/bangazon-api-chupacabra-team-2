@@ -117,7 +117,7 @@ class Profile(ViewSet):
             @apiError (404) {String} message  Not found message.
             """
             try:
-                open_order = Order.objects.get(customer=current_user, payment_type=None)
+                open_order = Order.objects.get(customer=current_user, payment=None)
                 line_items = OrderProduct.objects.filter(order=open_order)
                 line_items.delete()
                 open_order.delete()
@@ -181,18 +181,18 @@ class Profile(ViewSet):
             @apiError (404) {String} message  Not found message
             """
             try:
-                open_order = Order.objects.get(customer=current_user, payment_type=None)
+                open_order = Order.objects.get(customer=current_user, payment=None)
                 line_items = OrderProduct.objects.filter(order=open_order)
-                line_items = LineItemSerializer(
-                    line_items, many=True, context={"request": request}
-                )
+                # line_items = LineItemSerializer(
+                #     line_items, many=True, context={"request": request}
+                # )
 
                 cart = {}
                 cart["order"] = OrderSerializer(
                     open_order, many=False, context={"request": request}
                 ).data
-                cart["order"]["line_items"] = line_items.data
-                cart["order"]["size"] = len(line_items.data)
+                # cart["order"]["line_items"] = line_items.data
+                # cart["order"]["size"] = len(line_items.data)
 
             except Order.DoesNotExist as ex:
                 return Response(
