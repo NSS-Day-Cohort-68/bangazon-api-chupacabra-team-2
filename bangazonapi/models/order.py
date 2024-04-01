@@ -2,7 +2,7 @@
 
 from django.db import models
 from .customer import Customer
-from .payment import Payment
+from .paymenttype import Payment
 
 
 class Order(models.Model):

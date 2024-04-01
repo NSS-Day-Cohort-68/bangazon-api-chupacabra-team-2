@@ -17,8 +17,6 @@ from rest_framework.parsers import MultiPartParser, FormParser
 class ProductSerializer(serializers.ModelSerializer):
     """JSON serializer for products"""
 
-    # number_sold = serializers.ReadOnlyField()
-
     class Meta:
         model = Product
         fields = (
