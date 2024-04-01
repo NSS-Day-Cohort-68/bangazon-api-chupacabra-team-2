@@ -27,7 +27,6 @@ class PaymentSerializer(serializers.HyperlinkedModelSerializer):
             "account_number",
             "expiration_date",
             "create_date",
-            "customer",
         )
 
 
@@ -87,15 +86,15 @@ class Payments(ViewSet):
 
     def list(self, request):
         """Handle GET requests to payment type resource"""
-        payments = Payment.objects.all()
+        payment_types = Payment.objects.all()
 
         user_id = request.user.id
 
         try:
-            payments = Payment.objects.filter(customer__user__id=user_id)
+            payment_types = Payment.objects.filter(customer__user__id=user_id)
 
             serializer = PaymentSerializer(
-                payments, many=True, context={"request": request}
+                payment_types, many=True, context={"request": request}
             )
             return Response(serializer.data)
         except Exception as ex:
