@@ -16,17 +16,18 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 class ProductCategorySerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for product category"""
+
     class Meta:
         model = ProductCategory
         url = serializers.HyperlinkedIdentityField(
-            view_name='productcategory',
-            lookup_field='id'
+            view_name="productcategory", lookup_field="id"
         )
-        fields = ('id', 'url', 'name')
+        fields = ("id", "url", "name")
 
 
 class ProductCategories(ViewSet):
     """Categories for products"""
+
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def create(self, request):
@@ -39,7 +40,9 @@ class ProductCategories(ViewSet):
         new_product_category.name = request.data["name"]
         new_product_category.save()
 
-        serializer = ProductCategorySerializer(new_product_category, context={'request': request})
+        serializer = ProductCategorySerializer(
+            new_product_category, context={"request": request}
+        )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -47,7 +50,9 @@ class ProductCategories(ViewSet):
         """Handle GET requests for single category"""
         try:
             category = ProductCategory.objects.get(pk=pk)
-            serializer = ProductCategorySerializer(category, context={'request': request})
+            serializer = ProductCategorySerializer(
+                category, context={"request": request}
+            )
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
@@ -62,5 +67,6 @@ class ProductCategories(ViewSet):
         #     ProductCategories = ProductCategories.filter(name=name)
 
         serializer = ProductCategorySerializer(
-            product_category, many=True, context={'request': request})
+            product_category, many=True, context={"request": request}
+        )
         return Response(serializer.data)
