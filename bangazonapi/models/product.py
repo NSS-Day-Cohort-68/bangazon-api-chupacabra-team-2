@@ -48,9 +48,7 @@ class Product(SafeDeleteModel):
         Returns:
             int -- Number items on completed orders
         """
-        sold = OrderProduct.objects.filter(
-            product=self, order__payment_type__isnull=False
-        )
+        sold = OrderProduct.objects.filter(product=self, order__payment__isnull=False)
         return sold.count()
 
     @property
@@ -66,6 +64,20 @@ class Product(SafeDeleteModel):
     def can_be_rated(self, value):
         self.__can_be_rated = value
 
+    # @property
+    # def average_rating(self):
+    #     """Average rating calculated attribute for each product
+
+    #     Returns:
+    #         number -- The average rating for the product
+    #     """
+    #     ratings = ProductRating.objects.filter(product=self)
+    #     total_rating = 0
+    #     for rating in ratings:
+    #         total_rating += rating.rating
+
+    #     avg = total_rating / len(ratings)
+    #     return avg
     @property
     def average_rating(self):
         """Average rating calculated attribute for each product
@@ -74,6 +86,7 @@ class Product(SafeDeleteModel):
             number -- The average rating for the product
         """
         ratings = ProductRating.objects.filter(product=self)
+<<<<<<< HEAD
         total_rating = 0
         if ratings:
             for rating in ratings:
@@ -83,6 +96,16 @@ class Product(SafeDeleteModel):
             return avg
         else:
             return 0
+=======
+
+        try:
+            total_rating = sum(rating.rating for rating in ratings)
+            avg = total_rating / len(ratings)
+        except ZeroDivisionError:
+            avg = 0
+
+        return avg
+>>>>>>> 91615ff147e9c8d83082ab43898b5b48e127ac13
 
     class Meta:
         verbose_name = "product"

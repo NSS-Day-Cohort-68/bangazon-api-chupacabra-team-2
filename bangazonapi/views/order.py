@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from bangazonapi.models import Order, Payment, Customer, Product, OrderProduct
 from .product import ProductSerializer
+from .paymenttype import PaymentSerializer
 
 
 class OrderLineItemSerializer(serializers.HyperlinkedModelSerializer):
@@ -25,15 +26,20 @@ class OrderLineItemSerializer(serializers.HyperlinkedModelSerializer):
         depth = 1
 
 
-class OrderSerializer(serializers.HyperlinkedModelSerializer):
+class OrderSerializer(serializers.ModelSerializer):
     """JSON serializer for customer orders"""
 
-    lineitems = OrderLineItemSerializer(many=True)
+    lineitems = OrderLineItemSerializer(many=True, read_only=True)
+
+    payment = PaymentSerializer()
 
     class Meta:
         model = Order
         url = serializers.HyperlinkedIdentityField(view_name="order", lookup_field="id")
-        fields = ("id", "url", "created_date", "payment_type", "customer", "lineitems")
+        fields = ("id", "url", "created_date", "payment", "customer", "lineitems")
+
+
+# "lineitems"
 
 
 class Orders(ViewSet):
@@ -142,7 +148,7 @@ class Orders(ViewSet):
         customer = Customer.objects.get(user=request.auth.user)
         orders = Order.objects.filter(customer=customer)
 
-        payment = self.request.query_params.get("payment", None)
+        payment = self.request.query_params.get("payment_id", None)
         if payment is not None:
             orders = orders.filter(payment__id=payment)
 

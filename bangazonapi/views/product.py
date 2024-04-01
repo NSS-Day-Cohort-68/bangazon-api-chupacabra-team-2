@@ -23,7 +23,6 @@ class ProductSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "price",
-            "number_sold",
             "description",
             "quantity",
             "created_date",
@@ -31,8 +30,13 @@ class ProductSerializer(serializers.ModelSerializer):
             "image_path",
             "average_rating",
             "can_be_rated",
+            "number_sold",
         )
         depth = 1
+
+    def get_number_sold(self, obj):
+        """Return the number of items sold for the product."""
+        return obj.number_sold
 
 
 class Products(ViewSet):
