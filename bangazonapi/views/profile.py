@@ -192,7 +192,7 @@ class Profile(ViewSet):
                     open_order, many=False, context={"request": request}
                 ).data
                 # cart["order"]["line_items"] = line_items.data
-                # cart["order"]["size"] = len(line_items.data)
+                cart["order"]["size"] = len(line_items)
 
             except Order.DoesNotExist as ex:
                 return Response(
