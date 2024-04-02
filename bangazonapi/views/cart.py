@@ -123,3 +123,21 @@ class Cart(ViewSet):
             return Response({"message": ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(final["order"])
+
+    def complete(self, request, pk=None):
+        current_user = Customer.objects.get(user=request.auth.user)
+        try:
+            order_to_complete = Order.objects.get(
+                id=pk, customer=current_user, payment__isnull=True
+            )
+            payment_id = request.data.get("payment_id")
+
+            order_to_complete.payment_id = payment_id
+            order_to_complete.save()
+
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+        except Order.DoesNotExist:
+            return Response(
+                {"message": "Order not found or already completed"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
