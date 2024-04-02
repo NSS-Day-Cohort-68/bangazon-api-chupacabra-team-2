@@ -130,9 +130,9 @@ class Cart(ViewSet):
             order_to_complete = Order.objects.get(
                 id=pk, customer=current_user, payment__isnull=True
             )
-            payment_type_id = request.data.get("paymentTypeId")
+            payment_id = request.data.get("payment_id")
 
-            order_to_complete.payment_type_id = payment_type_id
+            order_to_complete.payment_id = payment_id
             order_to_complete.save()
 
             return Response({}, status=status.HTTP_204_NO_CONTENT)
