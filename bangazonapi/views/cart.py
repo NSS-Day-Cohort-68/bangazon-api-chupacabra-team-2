@@ -25,9 +25,7 @@ class Cart(ViewSet):
         current_user = Customer.objects.get(user=request.auth.user)
 
         try:
-            open_order = Order.objects.get(
-                customer=current_user, payment_type__isnull=True
-            )
+            open_order = Order.objects.get(customer=current_user, payment__isnull=True)
         except Order.DoesNotExist as ex:
             open_order = Order()
             open_order.created_date = datetime.datetime.now()
@@ -105,7 +103,7 @@ class Cart(ViewSet):
         """
         current_user = Customer.objects.get(user=request.auth.user)
         try:
-            open_order = Order.objects.get(customer=current_user, payment_type=None)
+            open_order = Order.objects.get(customer=current_user, payment=None)
 
             products_on_order = Product.objects.filter(lineitems__order=open_order)
 
@@ -125,3 +123,21 @@ class Cart(ViewSet):
             return Response({"message": ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(final["order"])
+
+    def complete(self, request, pk=None):
+        current_user = Customer.objects.get(user=request.auth.user)
+        try:
+            order_to_complete = Order.objects.get(
+                id=pk, customer=current_user, payment__isnull=True
+            )
+            payment_type_id = request.data.get("paymentTypeId")
+
+            order_to_complete.payment_type_id = payment_type_id
+            order_to_complete.save()
+
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+        except Order.DoesNotExist:
+            return Response(
+                {"message": "Order not found or already completed"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
