@@ -26,7 +26,7 @@ class OrderLineItemSerializer(serializers.HyperlinkedModelSerializer):
         depth = 1
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrderSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for customer orders"""
 
     lineitems = OrderLineItemSerializer(many=True, read_only=True)
@@ -37,9 +37,6 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         url = serializers.HyperlinkedIdentityField(view_name="order", lookup_field="id")
         fields = ("id", "url", "created_date", "payment", "customer", "lineitems")
-
-
-# "lineitems"
 
 
 class Orders(ViewSet):
