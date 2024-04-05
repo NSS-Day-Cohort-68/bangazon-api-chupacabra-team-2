@@ -1,4 +1,5 @@
 import json
+import datetime
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -42,6 +43,19 @@ class OrderTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        url = "/paymenttypes"
+        data = {
+            "id": 4,
+            "merchant_name": "American Express",
+            "account_number": "111-1111-1111",
+            "expiration_date": "2024-12-31",
+            "create_date": datetime.date.today(),
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        response = self.client.post(url, data, format="json")
+        json_response = json.loads(response.content)
+        self.payment_id = response.data.get("id")  # Store the payment type ID
 
     def test_add_product_to_order(self):
         """
@@ -92,5 +106,20 @@ class OrderTests(APITestCase):
         self.assertEqual(len(json_response["lineitems"]), 0)
 
     # TODO: Complete order by adding payment type
+    def test_complete_order_by_adding_payment(self):
+        # cart_id = 16
+        # complete an order using cart ID
+        url = "/cart/16/complete"
+        data = {"payment_id": self.payment_id}
+
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        response = self.client.put(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # Perform GET request to verify the payment type is assigned
+        url = "/orders"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["payment"]["id"], self.payment_id)
 
     # TODO: New line item is not added to closed order
