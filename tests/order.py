@@ -44,9 +44,9 @@ class OrderTests(APITestCase):
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+        # adding a payment type
         url = "/paymenttypes"
         data = {
-            "id": 4,
             "merchant_name": "American Express",
             "account_number": "111-1111-1111",
             "expiration_date": "2024-12-31",
@@ -107,9 +107,17 @@ class OrderTests(APITestCase):
 
     # TODO: Complete order by adding payment type
     def test_complete_order_by_adding_payment(self):
-        # cart_id = 16
+
+        # Add product to order
+        url = "/cart"
+        data = {"product_id": 1}
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        response = self.client.post(url, data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
         # complete an order using cart ID
-        url = "/cart/16/complete"
+        url = "/cart/1/complete"
         data = {"payment_id": self.payment_id}
 
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
@@ -120,6 +128,17 @@ class OrderTests(APITestCase):
         url = "/orders"
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["payment"]["id"], self.payment_id)
+
+        # Check if there is exactly one order
+        self.assertEqual(len(response.data), 1)
+
+        # Get the first (and only) order
+        order = response.data[0]
+
+        # Check if payment information exists
+        self.assertIn("payment", order)
+
+        # Assert that the payment ID matches the expected payment ID
+        self.assertEqual(order["payment"]["id"], self.payment_id)
 
     # TODO: New line item is not added to closed order
