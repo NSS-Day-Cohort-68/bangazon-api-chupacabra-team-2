@@ -7,6 +7,7 @@ from rest_framework import status
 from bangazonapi.models import Order, Customer, Product, OrderProduct
 from .product import ProductSerializer
 from .order import OrderSerializer
+from rest_framework.decorators import action
 
 
 class Cart(ViewSet):
@@ -57,7 +58,8 @@ class Cart(ViewSet):
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-    def delete(self, request, pk=None):
+    @action(detail=False, methods=["delete"], url_path="clear-cart")
+    def delete(self, request):
         current_user = Customer.objects.get(user=request.auth.user)
         open_order = Order.objects.get(customer=current_user, payment_type=None)
 

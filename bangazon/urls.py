@@ -32,5 +32,4 @@ urlpatterns = [
         Cart.as_view({"put": "complete"}),
         name="cart-complete",
     ),
-    path("cart/clear", Cart.as_view({"delete": "delete"}), name="clear_cart"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
