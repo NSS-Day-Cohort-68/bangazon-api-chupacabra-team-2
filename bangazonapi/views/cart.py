@@ -57,6 +57,14 @@ class Cart(ViewSet):
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
+    def delete(self, request, pk=None):
+        current_user = Customer.objects.get(user=request.auth.user)
+        open_order = Order.objects.get(customer=current_user, payment_type=None)
+
+        OrderProduct.objects.filter(order=open_order).delete()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
     def list(self, request):
         """
         @api {GET} /cart GET line items in cart
