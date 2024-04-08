@@ -142,3 +142,39 @@ class OrderTests(APITestCase):
         self.assertEqual(order["payment"]["id"], self.payment_id)
 
     # TODO: New line item is not added to closed order
+    def test_new_line_item_is_not_added_to_closed_order(self):
+        # Add product to order
+        url = "/cart"
+        data = {"product_id": 1}
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        response = self.client.post(url, data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # complete an order using cart ID
+        url = "/cart/1/complete"
+        data = {"payment_id": self.payment_id}
+
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        response = self.client.put(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # Add another product to order
+        url = "/cart"
+        data = {"product_id": 1}
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        response = self.client.post(url, data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # Perform GET request to verify there are exactly two orders
+        url = "/orders"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)  # Ensure there are two orders
+
+        # Get the second order
+        second_order = response.data[1]
+
+        # Check if payment information does not exist in the second order
+        self.assertIsNone(second_order["payment"])
