@@ -23,7 +23,7 @@
                 <tr>
                     <td>{{ order.id }}</td>
                     <td>{{ order.customer.user.first_name }}</td>
-                    <td>{{ order.lineitems.product.price }}</td>
+                    <td>{{ order.total_paid }}</td>
                     <td>{{ order.payment.merchant_name }}</td>
                 </tr>
             {% endfor %}
