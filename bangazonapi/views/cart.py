@@ -51,7 +51,7 @@ class Cart(ViewSet):
             HTTP/1.1 204 No Content
         """
         current_user = Customer.objects.get(user=request.auth.user)
-        open_order = Order.objects.get(customer=current_user, payment_type=None)
+        open_order = Order.objects.get(customer=current_user, payment=None)
 
         line_item = OrderProduct.objects.filter(product__id=pk, order=open_order)[0]
         line_item.delete()
@@ -61,7 +61,7 @@ class Cart(ViewSet):
     @action(detail=False, methods=["delete"], url_path="clear-cart")
     def delete(self, request):
         current_user = Customer.objects.get(user=request.auth.user)
-        open_order = Order.objects.get(customer=current_user, payment_type=None)
+        open_order = Order.objects.get(customer=current_user, payment=None)
 
         OrderProduct.objects.filter(order=open_order).delete()
 
