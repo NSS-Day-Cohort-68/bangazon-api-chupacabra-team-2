@@ -1,4 +1,5 @@
 import json
+import datetime
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -41,7 +42,21 @@ class OrderTests(APITestCase):
         }
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
         response = self.client.post(url, data, format="json")
+        self.product = json.loads(response.content)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # adding a payment type
+        url = "/paymenttypes"
+        data = {
+            "merchant_name": "American Express",
+            "account_number": "111-1111-1111",
+            "expiration_date": "2024-12-31",
+            "create_date": datetime.date.today(),
+        }
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        response = self.client.post(url, data, format="json")
+        self.payment = json.loads(response.content)
+        # self.payment_id = response.data.get("id")  # Store the payment type ID
 
     def test_add_product_to_order(self):
         """
@@ -92,5 +107,41 @@ class OrderTests(APITestCase):
         self.assertEqual(len(json_response["lineitems"]), 0)
 
     # TODO: Complete order by adding payment type
+    def test_complete_order_by_adding_payment(self):
+
+        # Add product to order
+        url = "/cart"
+        data = {"product_id": self.product["id"]}
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        response = self.client.post(url, data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # complete an order using cart ID
+        url = f"/cart/{self.payment["id"]}/complete"
+        data = {"payment_id": self.payment["id"]}
+
+
+
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
+        response = self.client.put(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # Perform GET request to verify the payment type is assigned
+        url = "/orders"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Check if there is exactly one order
+        self.assertEqual(len(response.data), 1)
+
+        # Get the first (and only) order
+        order = response.data[0]
+
+        # Check if payment information exists
+        self.assertIn("payment", order)
+
+        # Assert that the payment ID matches the expected payment ID
+        self.assertEqual(order["payment"]["id"], self.payment["id"])
 
     # TODO: New line item is not added to closed order
