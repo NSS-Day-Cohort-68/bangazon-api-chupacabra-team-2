@@ -5,6 +5,7 @@ from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 from bangazonapi.models import *
 from bangazonapi.views import *
+from bangazonapi.report_views import paid_orders_report
 
 # pylint: disable=invalid-name
 router = routers.DefaultRouter(trailing_slash=False)
@@ -32,4 +33,5 @@ urlpatterns = [
         Cart.as_view({"put": "complete"}),
         name="cart-complete",
     ),
+    path("reports/orders", paid_orders_report, name="paid_orders_report"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
