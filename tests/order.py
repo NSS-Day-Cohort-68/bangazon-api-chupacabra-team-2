@@ -42,6 +42,7 @@ class OrderTests(APITestCase):
         }
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
         response = self.client.post(url, data, format="json")
+        self.product = json.loads(response.content)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # adding a payment type
@@ -54,8 +55,8 @@ class OrderTests(APITestCase):
         }
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
         response = self.client.post(url, data, format="json")
-        json_response = json.loads(response.content)
-        self.payment_id = response.data.get("id")  # Store the payment type ID
+        self.payment = json.loads(response.content)
+        # self.payment_id = response.data.get("id")  # Store the payment type ID
 
     def test_add_product_to_order(self):
         """
@@ -110,15 +111,17 @@ class OrderTests(APITestCase):
 
         # Add product to order
         url = "/cart"
-        data = {"product_id": 1}
+        data = {"product_id": self.product["id"]}
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
         response = self.client.post(url, data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # complete an order using cart ID
-        url = "/cart/1/complete"
-        data = {"payment_id": self.payment_id}
+        url = f"/cart/{self.payment["id"]}/complete"
+        data = {"payment_id": self.payment["id"]}
+
+
 
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
         response = self.client.put(url, data, format="json")
@@ -139,7 +142,7 @@ class OrderTests(APITestCase):
         self.assertIn("payment", order)
 
         # Assert that the payment ID matches the expected payment ID
-        self.assertEqual(order["payment"]["id"], self.payment_id)
+        self.assertEqual(order["payment"]["id"], self.payment["id"])
 
     # TODO: New line item is not added to closed order
     def test_new_line_item_is_not_added_to_closed_order(self):
