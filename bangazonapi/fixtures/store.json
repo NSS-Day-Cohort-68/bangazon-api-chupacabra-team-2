@@ -1,0 +1,52 @@
+[
+  {
+    "model": "bangazonapi.store",
+    "pk": 1,
+    "fields": {
+      "name": "Tech Haven",
+      "description": "Your one-stop destination for all things tech! Find the latest gadgets, accessories, and more.",
+      "seller": 7,
+      "product_count": 500
+    }
+  },
+  {
+    "model": "bangazonapi.store",
+    "pk": 2,
+    "fields": {
+      "name": "Fashion Junction",
+      "description": "Discover the trendiest fashion items, from clothing to accessories, to express your unique style.",
+      "seller": 6,
+      "product_count": 350
+    }
+  },
+  {
+    "model": "bangazonapi.store",
+    "pk": 3,
+    "fields": {
+      "name": "Healthy Hub",
+      "description": "Your health and wellness haven! Explore a wide range of organic foods, supplements, and fitness essentials.",
+      "seller": 8,
+      "product_count": 200
+    }
+  },
+  {
+    "model": "bangazonapi.store",
+    "pk": 4,
+    "fields": {
+      "name": "Book Emporium",
+      "description": "Immerse yourself in a world of literature! From bestsellers to classics, find your next favorite read here.",
+      "seller": 6,
+      "product_count": 450
+    }
+  },
+  {
+    "model": "bangazonapi.store",
+    "pk": 5,
+    "fields": {
+      "name": "Pet Paradise",
+      "description": "Spoil your furry friends with our premium pet products! From toys to treats, we have everything your pets need.",
+      "seller": 5,
+      "product_count": 300
+    }
+  }
+]

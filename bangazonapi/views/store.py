@@ -24,6 +24,17 @@ class StoreSerializer(serializers.ModelSerializer):
         return self.context["request"].user == obj.seller
 
 
-class StoreView(viewsets.ModelViewSet):
-    queryset = Store.objects.all()
-    serializer_class = StoreSerializer
+class StoreView(viewsets.ViewSet):
+    def list(self, request):
+        stores = Store.objects.all()
+        serializer = StoreSerializer(stores, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+
+        try:
+            store = Store.objects.get(pk=pk)
+            serializer = StoreSerializer(store, context={"request": request})
+            return Response(serializer.data)
+        except Store.DoesNotExist:
+            return ResourceWarning(status=status.HTTP_404_NOT_FOUND)
