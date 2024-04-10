@@ -148,15 +148,15 @@ class OrderTests(APITestCase):
     def test_new_line_item_is_not_added_to_closed_order(self):
         # Add product to order
         url = "/cart"
-        data = {"product_id": 1}
+        data = {"product_id": self.product["id"]}
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
         response = self.client.post(url, data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # complete an order using cart ID
-        url = "/cart/1/complete"
-        data = {"payment_id": self.payment_id}
+        url = f"/cart/{self.payment["id"]}/complete"
+        data = {"payment_id": self.payment["id"]}
 
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
         response = self.client.put(url, data, format="json")
@@ -164,7 +164,7 @@ class OrderTests(APITestCase):
 
         # Add another product to order
         url = "/cart"
-        data = {"product_id": 1}
+        data = {"product_id": self.product["id"]}
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token)
         response = self.client.post(url, data, format="json")
 
