@@ -1,7 +1,7 @@
 # views.py
 
 from django.shortcuts import render
-from bangazonapi.models import Order
+from bangazonapi.models import Order, OrderProduct
 
 
 # def paid_orders_report(request):
@@ -29,6 +29,7 @@ from bangazonapi.models import Order
 
 def paid_orders_report(request):
     paid_orders = Order.objects.filter(payment__isnull=False)
+    # line_item = OrderProduct.objects.get()
 
     orders_with_info = []
 
