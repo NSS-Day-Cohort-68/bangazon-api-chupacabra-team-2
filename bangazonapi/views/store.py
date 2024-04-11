@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 
 class StoreSerializer(serializers.ModelSerializer):
     is_owner = serializers.SerializerMethodField()
-    products = ProductSerializer(many=True, read_only=True)
+    items = StoreProductSerializer(many=True, read_only=True)
 
     class Meta:
         model = Store
@@ -21,7 +21,7 @@ class StoreSerializer(serializers.ModelSerializer):
             "description",
             "product_count",
             "is_owner",
-            "products",
+            "items",
         ]
 
     def get_is_owner(self, obj):
@@ -67,7 +67,7 @@ class StoreView(viewsets.ViewSet):
     def store_products(self, request):
 
         if request.method == "GET":
-            store_products = Product.objects.filter(store.id == store_products.store_id)
+            store_products = Product.objects.filter(Store.id == store_products.store_id)
             serializer = StoreProductSerializer(
                 store_products, many=True, context={"request": request}
             )
