@@ -1,15 +1,18 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import serializers
-from bangazonapi.models import store, product, storeproduct
+from bangazonapi.models import Store, Product, StoreProduct
 
 
-class StoreProductSerializer(serializers.ModelSerializer):
+class StoreProductSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for product category"""
 
     class Meta:
-        model = storeproduct
-        fields = ("id", "store", "product")
+        model = StoreProduct
+        url = serializers.HyperlinkedIdentityField(
+            view_name="storeproduct", lookup_field="id"
+        )
+        fields = ("id", "url", "store", "product")
 
 
 class StoreProducts(viewsets.ViewSet):
