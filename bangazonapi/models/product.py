@@ -18,8 +18,16 @@ class Product(SafeDeleteModel):
         Customer, on_delete=models.DO_NOTHING, related_name="products"
     )
     price = models.FloatField(
-        validators=[MinValueValidator(0.00), MaxValueValidator(10000.00)],
+        validators=[MinValueValidator(0.00)],
     )
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(price__lte=17500.00), name="max_price_constraint"
+            )
+        ]
+
     description = models.CharField(
         max_length=255,
     )
