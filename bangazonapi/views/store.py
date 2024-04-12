@@ -11,13 +11,14 @@ from django.contrib.auth.models import User
 class StoreSerializer(serializers.ModelSerializer):
     is_owner = serializers.SerializerMethodField()
     items = StoreProductSerializer(many=True, read_only=True)
+    seller_info = serializers.SerializerMethodField()
 
     class Meta:
         model = Store
         fields = [
             "id",
             "name",
-            "seller",
+            "seller_info",
             "description",
             "product_count",
             "is_owner",
@@ -26,6 +27,23 @@ class StoreSerializer(serializers.ModelSerializer):
 
     def get_is_owner(self, obj):
         return self.context["request"].user == obj.seller
+
+    def get_seller_info(self, obj):
+        seller = obj.seller
+        return {
+            "id": seller.id,
+            "first_name": seller.first_name,
+            "last_name": seller.last_name,
+        }
+
+    # def get_seller_info(self, obj):
+    #     customer = obj.seller
+    #     user = customer.user
+    #     return {
+    #         "id": user.id,
+    #         "first_name": user.first_name,
+    #         "last_name": user.last_name,
+    #     }
 
 
 class StoreView(viewsets.ViewSet):
