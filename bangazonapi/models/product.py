@@ -21,13 +21,6 @@ class Product(SafeDeleteModel):
         validators=[MinValueValidator(0.00)],
     )
 
-    class Meta:
-        constraints = [
-            models.CheckConstraint(
-                check=models.Q(price__lte=17500.00), name="max_price_constraint"
-            )
-        ]
-
     description = models.CharField(
         max_length=255,
     )
@@ -104,5 +97,10 @@ class Product(SafeDeleteModel):
         return avg
 
     class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(price__lte=17500.00), name="max_price_constraint"
+            )
+        ]
         verbose_name = "product"
         verbose_name_plural = "products"
