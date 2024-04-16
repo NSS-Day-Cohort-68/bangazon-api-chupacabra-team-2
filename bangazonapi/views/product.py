@@ -114,6 +114,12 @@ class Products(ViewSet):
         product_category = ProductCategory.objects.get(pk=request.data["category_id"])
         new_product.category = product_category
 
+        if float(new_product.price) > 17500.00:
+            return Response(
+                {"error": "Price cannot exceed $17,500.00"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if "image_path" in request.data:
             format, imgstr = request.data["image_path"].split(";base64,")
             ext = format.split("/")[-1]
@@ -265,12 +271,15 @@ class Products(ViewSet):
         """
         products = Product.objects.all()
 
+        location = self.request.query_params.get("location", None)
+
         # Support filtering by category and/or quantity
         category = self.request.query_params.get("category", None)
         quantity = self.request.query_params.get("quantity", None)
         order = self.request.query_params.get("order_by", None)
         direction = self.request.query_params.get("direction", None)
         number_sold = self.request.query_params.get("number_sold", None)
+        min_price = self.request.query_params.get("min_price", None)
 
         if order is not None:
             order_filter = order
@@ -284,8 +293,20 @@ class Products(ViewSet):
         if category is not None:
             products = products.filter(category__id=category)
 
+        if location is not None:
+            products = products.filter(location__contains=location)
+
         if quantity is not None:
             products = products.order_by("-created_date")[: int(quantity)]
+
+        if min_price is not None:
+
+            def price_filter(product):
+                if product.price >= int(min_price):
+                    return True
+                return False
+
+            products = filter(price_filter, products)
 
         if number_sold is not None:
 
