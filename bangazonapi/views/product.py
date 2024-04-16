@@ -114,6 +114,12 @@ class Products(ViewSet):
         product_category = ProductCategory.objects.get(pk=request.data["category_id"])
         new_product.category = product_category
 
+        if float(new_product.price) > 17500.00:
+            return Response(
+                {"error": "Price cannot exceed $17,500.00"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if "image_path" in request.data:
             format, imgstr = request.data["image_path"].split(";base64,")
             ext = format.split("/")[-1]
